@@ -1,0 +1,29 @@
+[  
+    {  
+        "id": 1,  
+        "description": "Engine overheating fault",  
+        "fault_detection_time": "2023-04-01T12:00:00Z",  
+        "fault_detection_count": 0,  
+        "fault_status": "NORMAL",  
+        "fault_detection_function_pointer": "detect_engine_overheating",  
+        "fault_handling_function_pointer": "handle_engine_overheating"  
+    },  
+    {  
+        "id": 2,  
+        "description": "Brake system malfunction",  
+        "fault_detection_time": "2023-04-01T13:00:00Z",  
+        "fault_detection_count": 0,  
+        "fault_status": "WARNING",  
+        "fault_detection_function_pointer": "detect_brake_malfunction",  
+        "fault_handling_function_pointer": "handle_brake_malfunction"  
+    },  
+    {  
+        "id": 3,  
+        "description": "Transmission error",  
+        "fault_detection_time": "2023-04-02T09:00:00Z",  
+        "fault_detection_count": 1,  
+        "fault_status": "CRITICAL",  
+        "fault_detection_function_pointer": "detect_transmission_error",  
+        "fault_handling_function_pointer": "handle_transmission_error"  
+    }  
+]
