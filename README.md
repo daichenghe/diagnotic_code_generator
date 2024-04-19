@@ -1,0 +1,2 @@
+# diagnotic_code_generator
+根据json文件描述的诊断信息生成c代码
