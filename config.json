@@ -1,0 +1,63 @@
+{  
+    "diagnostics": [  
+        {  
+            "id": 0,  
+            "name": "group1",
+            "subitems": [  
+                {  
+                    "id": 0, 
+                    "name": "radiator",
+                    "description": "Brake fluid leak",               
+                    "DTI": 5,  
+                    "FDTI": 10,  
+                    "fault_status": "NORMAL",  
+                    "fault_detection_function_pointer": "Radiator_detect_process",  
+                    "fault_handling_function_pointer": "Radiator_fault_handle"  
+                },  
+                {  
+                    "id": 1,  
+                    "name": "cool",                    
+                    "DTI": 10,  
+                    "FDTI": 20,  
+                    "fault_status": "NORMAL",  
+                    "fault_detection_function_pointer": "Cooling_detect_process",  
+                    "fault_handling_function_pointer": "Cooling_fault_handle"  
+                }  
+            ]  
+        },  
+        {  
+            "id": 1,  
+            "name": "group2",
+            "subitems": [  
+                {  
+                    "id": 0,  
+                    "name": "brake",
+                    "DTI": 15,  
+                    "FDTI": 30,  
+                    "fault_status": "NORMAL",  
+                    "fault_detection_function_pointer": "Brake_detect_process",  
+                    "fault_handling_function_pointer": "Brake_fault_handle"  
+                },  
+                {  
+                    "id": 1,  
+                    "name": "oc",
+                    "DTI": 20,  
+                    "FDTI": 100,  
+                    "fault_status": "NORMAL",  
+                    "fault_detection_function_pointer": "Oc_detect_process",  
+                    "fault_handling_function_pointer": "Oc_fault_handle"  
+                },  
+                {  
+                    "id": 2,  
+                    "name": "ov",
+                    "DTI": 25,  
+                    "FDTI": 10,  
+                    "fault_status": "NORMAL",  
+                    "fault_detection_function_pointer": "Ov_detect_process",  
+                    "fault_handling_function_pointer": "Ov_fault_handle"  
+                }  
+            ]  
+        }  
+    ],
+    "diagnotic task period": 5
+}  
