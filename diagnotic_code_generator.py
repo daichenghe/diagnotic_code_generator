@@ -1,77 +1,6 @@
 import json  
 import sys
-  
-# 假设json_str是从文件中读取的JSON字符串  
-json_str = '''  
-{  
-    "diagnostics": [  
-        {  
-            "id": 0,  
-            "name": "group1",
-            "subitems": [  
-                {  
-                    "id": 0, 
-                    "name": "radiator",
-                    "description": "Brake fluid leak",               
-                    "DTI": 5,  
-                    "FDTI": 10,  
-                    "fault_status": "NORMAL",  
-                    "fault_detection_function_pointer": "Radiator_detect_process",  
-                    "fault_handling_function_pointer": "Radiator_fault_handle"  
-                },  
-                {  
-                    "id": 1,  
-                    "name": "cool",                    
-                    "DTI": 5,  
-                    "FDTI": 20,  
-                    "fault_status": "NORMAL",  
-                    "fault_detection_function_pointer": "Cooling_detect_process",  
-                    "fault_handling_function_pointer": "Cooling_fault_handle"  
-                }  
-            ]  
-        },  
-        {  
-            "id": 1,  
-            "name": "group2",
-            "subitems": [  
-                {  
-                    "id": 0,  
-                    "name": "brake",
-                    "DTI": 5,  
-                    "FDTI": 30,  
-                    "fault_status": "NORMAL",  
-                    "fault_detection_function_pointer": "Brake_detect_process",  
-                    "fault_handling_function_pointer": "Brake_fault_handle"  
-                },  
-                {  
-                    "id": 1,  
-                    "name": "oc",
-                    "DTI": 5,  
-                    "FDTI": 100,  
-                    "fault_status": "NORMAL",  
-                    "fault_detection_function_pointer": "Oc_detect_process",  
-                    "fault_handling_function_pointer": "Oc_fault_handle"  
-                },  
-                {  
-                    "id": 2,  
-                    "name": "ov",
-                    "DTI": 5,  
-                    "FDTI": 10,  
-                    "fault_status": "NORMAL",  
-                    "fault_detection_function_pointer": "Ov_detect_process",  
-                    "fault_handling_function_pointer": "Ov_fault_handle"  
-                }  
-            ]  
-        }  
-    ],
-    "diagnotic task period": 5
-}  
-'''  
-  
-# 解析JSON  
-data = json.loads(json_str)  
-
-
+import argparse
 
 
 diagnostic_group_struct_def_template = '''
@@ -87,11 +16,33 @@ Subitem {subitem_name} =
 {{
     .id = {id},  
     .DTI = {DTI},  
+    .tick = 0,
     .fault_detection_count_threshold = {fault_detection_count_threshold},  
     // .detectFunc和.handleFunc需要指向实际的函数，这里仅作占位  
     .detectFunc = {detectFunc},
     .handleFunc = {handleFunc}, 
 }};
+'''
+
+diagnotic_interface_source_function_template = '''
+bool {detect_func_name}()
+{{
+    ;
+}}
+
+void {handle_func_name}()
+{{
+    ;
+}}
+
+'''
+
+
+diagnotic_interface_header_function_template = '''
+bool {detect_func_name}();
+
+void {handle_func_name}();
+
 '''
 
 # 生成C代码  
@@ -108,7 +59,7 @@ def generate_c_code(data):
     c_code = f'''  
 #include <stdio.h>  
 #include <stdint.h> // 引入stdint.h以使用uint8_t类型  
-#include "handle.h"
+#include "handler.h"
   
 #ifndef TRUE
 #define TRUE        0
@@ -127,7 +78,8 @@ typedef void (*handleProcess)();
 // 定义结构体  
 typedef struct Subitem {{  
     char id;  
-    uint8_t DTI;  
+    uint8_t DTI; 
+    uint8_t tick;    
     uint8_t fault_detection_count_threshold;   
     uint8_t fault_count;
     bool fault_status;
@@ -194,11 +146,17 @@ typedef struct {{
   
 // 定时检查诊断项的函数  
 void check_diagnostics() {
+    uint8_t diagnoticPeriod = 5;
     for (int i = 0; i < NUM_DIAGNOSTICS; i++) {
         for (int j = 0; j < diagnostics[i]->number; j++) {
+            diagnostics[i]->subitems[j]->tick+= diagnoticPeriod;
+            bool detection_result = FALSE;
             // 调用检测函数  
-            bool detection_result = diagnostics[i]->subitems[j]->detectFunc();  
-              
+            if(diagnostics[i]->subitems[j]->tick >= diagnostics[i]->subitems[j]->DTI)
+            {
+                detection_result = diagnostics[i]->subitems[j]->detectFunc();  
+                diagnostics[i]->subitems[j]->tick = 0;
+            }
             // 更新fault_detection_count和fault_status  
             if (detection_result) {
                 diagnostics[i]->subitems[j]->fault_count++;  
@@ -233,8 +191,62 @@ int main() {
   
     return c_code  
   
-# 生成C代码
-fs = open(sys.argv[1], 'w')
-c_code = generate_c_code(data)  
-fs.write(c_code)
-fs.close()
+
+
+def generate_diagnotic_interface_source_code(data):
+    fs = open('handler.c', 'w')
+    c_code = '''
+#include "handler.h"
+#include <stdio.h>
+'''
+    for i, diag in enumerate(data["diagnostics"]):  
+        for j, subitem in enumerate(diag.get("subitems", [])):  
+            funciton = diagnotic_interface_source_function_template.format(detect_func_name = subitem["fault_detection_function_pointer"], handle_func_name = subitem["fault_handling_function_pointer"])    
+            c_code += funciton
+    fs.write(c_code)
+    fs.close()
+            
+def generate_diagnotic_interface_header_code(data):
+    fs = open('handler.h', 'w')
+    c_code = '''
+#ifndef __HANDLE_H__
+#define __HANDLE_H__
+#include <stdint.h>
+
+typedef uint8_t bool;
+'''
+    for i, diag in enumerate(data["diagnostics"]):  
+        for j, subitem in enumerate(diag.get("subitems", [])):  
+            funciton = diagnotic_interface_header_function_template.format(detect_func_name = subitem["fault_detection_function_pointer"], handle_func_name = subitem["fault_handling_function_pointer"])    
+            c_code += funciton
+    c_code += '''
+#endif
+'''
+    fs.write(c_code)
+    fs.close()
+    
+def build_args():
+    """parse input arguments
+    """
+    parser = argparse.ArgumentParser(
+        description='Diagnotic code generator input args command:', allow_abbrev=False)
+
+    parser.add_argument("-output", dest='output_file',
+                        help="set file path to save generate code")
+    parser.add_argument("-s", "--set-para_path", dest='user_para',
+                        help="set para json file path", default="./config.json")
+
+    return parser.parse_args()
+
+if __name__ == '__main__':
+    parser = build_args()
+    c_code = str()
+    with open(parser.user_para, 'r') as fs:
+        data = fs.read()
+        json_data = json.loads(data)    
+        c_code = generate_c_code(json_data)  
+    with open(parser.output_file, 'w') as fs:
+        fs.write(c_code)
+        fs.close()
+    generate_diagnotic_interface_source_code(json_data)
+    generate_diagnotic_interface_header_code(json_data)
