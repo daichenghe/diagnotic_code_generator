@@ -2,60 +2,184 @@
     "diagnostics": [  
         {  
             "id": 0,  
-            "name": "group1",
+            "name": "CDD_PreDriverDiagnoticGroup",
             "subitems": [  
                 {  
                     "id": 0, 
-                    "name": "radiator",
-                    "description": "Brake fluid leak",               
+                    "name": "ChipOt",
+                    "description": "TLE9183 predriver chip over temperate",               
                     "DTI": 5,  
                     "FDTI": 10,  
-                    "fault_status": "NORMAL",  
-                    "fault_detection_function_pointer": "Radiator_detect_process",  
-                    "fault_handling_function_pointer": "Radiator_fault_handle"  
+                    "fault_priority": 0,  
+                    "fault_detection_function_pointer": "PreDriver_ChipOtDiagnoticProcess",  
+                    "fault_handling_function_pointer": "PreDriver_ChipOtHandler"  
                 },  
                 {  
-                    "id": 1,  
-                    "name": "cool",                    
-                    "DTI": 10,  
-                    "FDTI": 20,  
-                    "fault_status": "NORMAL",  
-                    "fault_detection_function_pointer": "Cooling_detect_process",  
-                    "fault_handling_function_pointer": "Cooling_fault_handle"  
-                }  
+                    "id": 1, 
+                    "name": "CbUv",
+                    "description": "TLE9183 predriver Charge Pump Buffer under voltage",               
+                    "DTI": 5,  
+                    "FDTI": 10,  
+                    "fault_priority": 2,  
+                    "fault_detection_function_pointer": "PreDriver_CbUvDiagnoticProcess",  
+                    "fault_handling_function_pointer": "PreDriver_CbUvHandler"  
+                },  
+                {  
+                    "id": 2, 
+                    "name": "HighBcOv",
+                    "description": "TLE9183 predriver High-sides Buffer Capacitor overvoltage detection error",               
+                    "DTI": 5,  
+                    "FDTI": 10,  
+                    "fault_priority": 2,  
+                    "fault_detection_function_pointer": "PreDriver_HighSideBcOvDiagnoticProcess",  
+                    "fault_handling_function_pointer": "PreDriver_HighSideBcOvHandler"  
+                },  
+                {  
+                    "id": 3, 
+                    "name": "CpOl",
+                    "description": "TLE9183 predriver Charge Pump Overload error",               
+                    "DTI": 5,  
+                    "FDTI": 10,  
+                    "fault_priority": 0,  
+                    "fault_detection_function_pointer": "PreDriver_CpOlDiagnoticProcess",  
+                    "fault_handling_function_pointer": "PreDriver_CpOlHandler"  
+                },  
+                {  
+                    "id": 4, 
+                    "name": "BcUv",
+                    "description": "TLE9183 predriver High-sides Buffer Capacitor undervoltage detection error",               
+                    "DTI": 5,  
+                    "FDTI": 10,  
+                    "fault_priority": 0,  
+                    "fault_detection_function_pointer": "PreDriver_BcUvDiagnoticProcess",  
+                    "fault_handling_function_pointer": "PreDriver_BcUvHandler"  
+                },  
+                {  
+                    "id": 5, 
+                    "name": "VccOv",
+                    "description": "TLE9183 predriver control loop voltage supply overvoltage detection error",               
+                    "DTI": 5,  
+                    "FDTI": 10,  
+                    "fault_priority": 0,  
+                    "fault_detection_function_pointer": "PreDriver_VccOvDiagnoticProcess",  
+                    "fault_handling_function_pointer": "PreDriver_VccOvHandler"  
+                },  
+                {  
+                    "id": 6, 
+                    "name": "VccUv",
+                    "description": "TLE9183 predriver control loop voltage supply undervoltage detection error",               
+                    "DTI": 5,  
+                    "FDTI": 10,  
+                    "fault_priority": 0,  
+                    "fault_detection_function_pointer": "PreDriver_VccUvDiagnoticProcess",  
+                    "fault_handling_function_pointer": "PreDriver_VccUvHandler"  
+                },  
+                {  
+                    "id": 7, 
+                    "name": "VsOv",
+                    "description": "TLE9183 predriver driver loop voltage supply overvoltage detection error",               
+                    "DTI": 5,  
+                    "FDTI": 10,  
+                    "fault_priority": 0,  
+                    "fault_detection_function_pointer": "PreDriver_VsOvDiagnoticProcess",  
+                    "fault_handling_function_pointer": "PreDriver_VsOvHandler"  
+                },
+                {  
+                    "id": 8, 
+                    "name": "VsUv",
+                    "description": "TLE9183 predriver driver loop voltage supply undervoltage detection error",               
+                    "DTI": 5,  
+                    "FDTI": 10,  
+                    "fault_priority": 0,  
+                    "fault_detection_function_pointer": "PreDriver_VsUvDiagnoticProcess",  
+                    "fault_handling_function_pointer": "PreDriver_VsUvHandler"  
+                },
+                {  
+                    "id": 9, 
+                    "name": "DrainOv",
+                    "description": "TLE9183 predriver drain voltage overvoltage detection error",               
+                    "DTI": 5,  
+                    "FDTI": 10,  
+                    "fault_priority": 0,  
+                    "fault_detection_function_pointer": "PreDriver_DrainOvDiagnoticProcess",  
+                    "fault_handling_function_pointer": "PreDriver_DrainOvHandler"  
+                },
+                {  
+                    "id": 10,
+                    "name": "DrainUv",
+                    "description": "TLE9183 predriver drain voltage uvervoltage detection error",
+                    "DTI": 5,
+                    "FDTI": 10,
+                    "fault_priority": 0,
+                    "fault_detection_function_pointer": "PreDriver_DrainUvDiagnoticProcess",
+                    "fault_handling_function_pointer": "PreDriver_DrainUvHandler"
+                },
+                {  
+                    "id": 11,
+                    "name": "ClockFailure",
+                    "description": "TLE9183 predriver clock suoervision fail",
+                    "DTI": 5,
+                    "FDTI": 10,
+                    "fault_priority": 2,
+                    "fault_detection_function_pointer": "PreDriver_ClockFailureDiagnoticProcess",
+                    "fault_handling_function_pointer": "PreDriver_ClockFailureHandler"
+                },
+                {  
+                    "id": 12,
+                    "name": "VsOl",
+                    "description": "TLE9183 predriver driver loop voltage supply overload detection error",
+                    "DTI": 5,
+                    "FDTI": 10,
+                    "fault_priority": 2,
+                    "fault_detection_function_pointer": "PreDriver_VsOlDiagnoticDiagnoticProcess",
+                    "fault_handling_function_pointer": "PreDriver_VsOlHandler"
+                },
+                {  
+                    "id": 13,
+                    "name": "MosfetOc",
+                    "description": "TLE9183 predriver mosfet over current",
+                    "DTI": 5,
+                    "FDTI": 10,
+                    "fault_priority": 2,
+                    "fault_detection_function_pointer": "PreDriver_MosfetOcDiagnoticProcess",
+                    "fault_handling_function_pointer": "PreDriver_MosfetOcHandler"
+                },
+                {  
+                    "id": 14,
+                    "name": "SignatureInvalid",
+                    "description": "TLE9183 predriver configuration registers signature invalid",
+                    "DTI": 5,
+                    "FDTI": 10,
+                    "fault_priority": 2,
+                    "fault_detection_function_pointer": "PreDriver_SignatureInvalidDiagnoticProcess",
+                    "fault_handling_function_pointer": "PreDriver_SignatureInvalidHandler"
+                },
+                {  
+                    "id": 15,
+                    "name": "ComFail",
+                    "description": "TLE9183 predriver communication fail",
+                    "DTI": 5,
+                    "FDTI": 10,
+                    "fault_priority": 2,
+                    "fault_detection_function_pointer": "PreDriver_ComFailDiagnoticProcess",
+                    "fault_handling_function_pointer": "PreDriver_ComFailHandler"
+                }
             ]  
-        },  
+        },
         {  
             "id": 1,  
-            "name": "group2",
+            "name": "MCAL_AdcDiagnoticGroup",
             "subitems": [  
                 {  
-                    "id": 0,  
-                    "name": "brake",
-                    "DTI": 15,  
-                    "FDTI": 30,  
-                    "fault_status": "NORMAL",  
-                    "fault_detection_function_pointer": "Brake_detect_process",  
-                    "fault_handling_function_pointer": "Brake_fault_handle"  
-                },  
-                {  
-                    "id": 1,  
-                    "name": "oc",
-                    "DTI": 20,  
-                    "FDTI": 100,  
-                    "fault_status": "NORMAL",  
-                    "fault_detection_function_pointer": "Oc_detect_process",  
-                    "fault_handling_function_pointer": "Oc_fault_handle"  
-                },  
-                {  
-                    "id": 2,  
-                    "name": "ov",
-                    "DTI": 25,  
-                    "FDTI": 10,  
-                    "fault_status": "NORMAL",  
-                    "fault_detection_function_pointer": "Ov_detect_process",  
-                    "fault_handling_function_pointer": "Ov_fault_handle"  
-                }  
+                    "id": 0,
+                    "name": "AdcSampleFailure",
+                    "description": "adc sample value is grater than the maximun value or lower than the min value",
+                    "DTI": 5,
+                    "FDTI": 10,
+                    "fault_priority": 2,
+                    "fault_detection_function_pointer": "PreDriver_AdcSampleFailureDiagnoticProcess",
+                    "fault_handling_function_pointer": "PreDriver_AdcSampleFailureHandler"
+                }
             ]  
         }  
     ],

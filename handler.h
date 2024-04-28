@@ -5,29 +5,89 @@
 
 typedef uint8_t bool;
 
-bool Radiator_detect_process();
+bool PreDriver_ChipOtDiagnoticProcess();
 
-void Radiator_fault_handle();
-
-
-bool Cooling_detect_process();
-
-void Cooling_fault_handle();
+void PreDriver_ChipOtHandler();
 
 
-bool Brake_detect_process();
+bool PreDriver_CbUvDiagnoticProcess();
 
-void Brake_fault_handle();
-
-
-bool Oc_detect_process();
-
-void Oc_fault_handle();
+void PreDriver_CbUvHandler();
 
 
-bool Ov_detect_process();
+bool PreDriver_HighSideBcOvDiagnoticProcess();
 
-void Ov_fault_handle();
+void PreDriver_HighSideBcOvHandler();
+
+
+bool PreDriver_CpOlDiagnoticProcess();
+
+void PreDriver_CpOlHandler();
+
+
+bool PreDriver_BcUvDiagnoticProcess();
+
+void PreDriver_BcUvHandler();
+
+
+bool PreDriver_VccOvDiagnoticProcess();
+
+void PreDriver_VccOvHandler();
+
+
+bool PreDriver_VccUvDiagnoticProcess();
+
+void PreDriver_VccUvHandler();
+
+
+bool PreDriver_VsOvDiagnoticProcess();
+
+void PreDriver_VsOvHandler();
+
+
+bool PreDriver_VsUvDiagnoticProcess();
+
+void PreDriver_VsUvHandler();
+
+
+bool PreDriver_DrainOvDiagnoticProcess();
+
+void PreDriver_DrainOvHandler();
+
+
+bool PreDriver_DrainUvDiagnoticProcess();
+
+void PreDriver_DrainUvHandler();
+
+
+bool PreDriver_ClockFailureDiagnoticProcess();
+
+void PreDriver_ClockFailureHandler();
+
+
+bool PreDriver_VsOlDiagnoticDiagnoticProcess();
+
+void PreDriver_VsOlHandler();
+
+
+bool PreDriver_MosfetOcDiagnoticProcess();
+
+void PreDriver_MosfetOcHandler();
+
+
+bool PreDriver_SignatureInvalidDiagnoticProcess();
+
+void PreDriver_SignatureInvalidHandler();
+
+
+bool PreDriver_ComFailDiagnoticProcess();
+
+void PreDriver_ComFailHandler();
+
+
+bool PreDriver_AdcSampleFailureDiagnoticProcess();
+
+void PreDriver_AdcSampleFailureHandler();
 
 
 #endif

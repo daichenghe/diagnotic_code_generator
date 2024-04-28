@@ -2,57 +2,190 @@
 #include "handler.h"
 #include <stdio.h>
 
-bool Radiator_detect_process()
+bool PreDriver_ChipOtDiagnoticProcess()
 {
-    printf("Radiator_detect_process\n");
+    printf("PreDriver_ChipOtDiagnoticProcess\r\n");
 }
 
-void Radiator_fault_handle()
+void PreDriver_ChipOtHandler()
 {
     ;
 }
 
 
-bool Cooling_detect_process()
+bool PreDriver_CbUvDiagnoticProcess()
 {
-    printf("Cooling_detect_process\n");
+    ;
 }
 
-void Cooling_fault_handle()
+void PreDriver_CbUvHandler()
 {
     ;
 }
 
 
-bool Brake_detect_process()
+bool PreDriver_HighSideBcOvDiagnoticProcess()
 {
-    printf("Brake_detect_process\n");
+    ;
 }
 
-void Brake_fault_handle()
+void PreDriver_HighSideBcOvHandler()
 {
     ;
 }
 
 
-bool Oc_detect_process()
+bool PreDriver_CpOlDiagnoticProcess()
 {
-    printf("Oc_detect_process\n");
+    ;
 }
 
-void Oc_fault_handle()
+void PreDriver_CpOlHandler()
 {
     ;
 }
 
 
-bool Ov_detect_process()
-{
-    printf("Ov_detect_process\n");
-}
-
-void Ov_fault_handle()
+bool PreDriver_BcUvDiagnoticProcess()
 {
     ;
+}
+
+void PreDriver_BcUvHandler()
+{
+    ;
+}
+
+
+bool PreDriver_VccOvDiagnoticProcess()
+{
+    ;
+}
+
+void PreDriver_VccOvHandler()
+{
+    printf("PreDriver_VccOvHandler\r\n");
+}
+
+
+bool PreDriver_VccUvDiagnoticProcess()
+{
+    ;
+}
+
+void PreDriver_VccUvHandler()
+{
+    ;
+}
+
+
+bool PreDriver_VsOvDiagnoticProcess()
+{
+    ;
+}
+
+void PreDriver_VsOvHandler()
+{
+    ;
+}
+
+
+bool PreDriver_VsUvDiagnoticProcess()
+{
+    ;
+}
+
+void PreDriver_VsUvHandler()
+{
+    ;
+}
+
+
+bool PreDriver_DrainOvDiagnoticProcess()
+{
+    ;
+}
+
+void PreDriver_DrainOvHandler()
+{
+    ;
+}
+
+
+bool PreDriver_DrainUvDiagnoticProcess()
+{
+    ;
+}
+
+void PreDriver_DrainUvHandler()
+{
+    ;
+}
+
+
+bool PreDriver_ClockFailureDiagnoticProcess()
+{
+    ;
+}
+
+void PreDriver_ClockFailureHandler()
+{
+    ;
+}
+
+
+bool PreDriver_VsOlDiagnoticDiagnoticProcess()
+{
+    ;
+}
+
+void PreDriver_VsOlHandler()
+{
+    ;
+}
+
+
+bool PreDriver_MosfetOcDiagnoticProcess()
+{
+    ;
+}
+
+void PreDriver_MosfetOcHandler()
+{
+    ;
+}
+
+
+bool PreDriver_SignatureInvalidDiagnoticProcess()
+{
+    ;
+}
+
+void PreDriver_SignatureInvalidHandler()
+{
+    ;
+}
+
+
+bool PreDriver_ComFailDiagnoticProcess()
+{
+    ;
+}
+
+void PreDriver_ComFailHandler()
+{
+    ;
+}
+
+
+bool PreDriver_AdcSampleFailureDiagnoticProcess()
+{
+    ;
+}
+
+void PreDriver_AdcSampleFailureHandler()
+{
+    printf("PreDriver_AdcSampleFailureHandler\r\n");
+
 }
 

@@ -16,6 +16,7 @@ Subitem {subitem_name} =
 {{
     .id = {id},  
     .DTI = {DTI},  
+    .priority = {fault_priority},
     .tick = 0,
     .fault_detection_count_threshold = {fault_detection_count_threshold},  
     // .detectFunc和.handleFunc需要指向实际的函数，这里仅作占位  
@@ -79,7 +80,8 @@ typedef void (*handleProcess)();
 typedef struct Subitem {{  
     char id;  
     uint8_t DTI; 
-    uint8_t tick;    
+    uint8_t tick;
+    uint8_t priority;
     uint8_t fault_detection_count_threshold;   
     uint8_t fault_count;
     bool fault_status;
@@ -103,7 +105,7 @@ typedef struct {{
         subitems_code = ''  
         for j, subitem in enumerate(diag.get("subitems", [])):  
             count = int(subitem["FDTI"]/subitem["DTI"])
-            diagnostic_subitem_struct = diagnostic_subitem_struct_def_template.format(subitem_name = subitem["name"], id = subitem["id"], DTI = subitem["DTI"], fault_detection_count_threshold = count, detectFunc = subitem["fault_detection_function_pointer"], handleFunc = subitem["fault_handling_function_pointer"])    
+            diagnostic_subitem_struct = diagnostic_subitem_struct_def_template.format(subitem_name = subitem["name"], id = subitem["id"], DTI = subitem["DTI"], fault_priority = subitem["fault_priority"], fault_detection_count_threshold = count, detectFunc = subitem["fault_detection_function_pointer"], handleFunc = subitem["fault_handling_function_pointer"])    
             c_code += diagnostic_subitem_struct
 
     for diag in (data["diagnostics"]):  
