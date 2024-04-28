@@ -1,6 +1,7 @@
 import json  
 import sys
 import argparse
+import os
 
 
 diagnostic_group_struct_def_template = '''
@@ -25,12 +26,14 @@ Subitem {subitem_name} =
 }};
 '''
 
-diagnotic_interface_source_function_template = '''
+diagnotic_detect_source_function_template = '''
 bool {detect_func_name}()
 {{
     ;
 }}
 
+'''
+diagnotic_handle_source_function_template = '''
 void {handle_func_name}()
 {{
     ;
@@ -39,15 +42,17 @@ void {handle_func_name}()
 '''
 
 
-diagnotic_interface_header_function_template = '''
+diagnotic_detect_header_function_template = '''
 bool {detect_func_name}();
-
-void {handle_func_name}();
 
 '''
 
+diagnotic_handle_header_function_template = '''
+void {handle_func_name}();
+
+'''
 # 生成C代码  
-def generate_c_code(data):  
+def generate_c_code(data, detect_file, handle_file):
     # 计算诊断项和子项的数量  
     num_diagnostics = len(data["diagnostics"])  
     max_diag_id_length = max(len(str(diag["id"])) for diag in data["diagnostics"]) + 1  # 加1是为了字符串的结束符'\0'  
@@ -60,8 +65,9 @@ def generate_c_code(data):
     c_code = f'''  
 #include <stdio.h>  
 #include <stdint.h> // 引入stdint.h以使用uint8_t类型  
-#include "handler.h"
-  
+#include "{detect_file}.h"
+#include "{handle_file}.h"
+
 #ifndef TRUE
 #define TRUE        0
 #define FALSE       1  
@@ -96,7 +102,7 @@ typedef struct {{
 }} DiagnosticGroup;  
   
 
-'''  
+'''
 
 
     # 填充诊断项和子项数据  
@@ -195,37 +201,58 @@ int main() {
   
 
 
-def generate_diagnotic_interface_source_code(data):
-    fs = open('handler.c', 'w')
-    c_code = '''
+def generate_diagnotic_interface_source_code(data, detect_file, handle_file):
+    fs_detect = open( (detect_file + '.c'), 'w')
+    fs_handle = open( (handle_file + '.c'), 'w')    
+    detect_c_code = '''
+#include "handler.h"
+#include <stdio.h>
+'''
+    handle_c_code = '''
 #include "handler.h"
 #include <stdio.h>
 '''
     for i, diag in enumerate(data["diagnostics"]):  
         for j, subitem in enumerate(diag.get("subitems", [])):  
-            funciton = diagnotic_interface_source_function_template.format(detect_func_name = subitem["fault_detection_function_pointer"], handle_func_name = subitem["fault_handling_function_pointer"])    
-            c_code += funciton
-    fs.write(c_code)
-    fs.close()
+            detect_c_code+= diagnotic_detect_source_function_template.format(detect_func_name = subitem["fault_detection_function_pointer"])
+            handle_c_code+= diagnotic_handle_source_function_template.format(handle_func_name = subitem["fault_handling_function_pointer"])
+    fs_detect.write(detect_c_code)
+    fs_detect.close()
+    fs_handle.write(handle_c_code)
+    fs_handle.close()    
             
-def generate_diagnotic_interface_header_code(data):
-    fs = open('handler.h', 'w')
-    c_code = '''
-#ifndef __HANDLE_H__
-#define __HANDLE_H__
+def generate_diagnotic_interface_header_code(data, detect_file, handle_file):
+    fs_detect = open( (detect_file + '.h'), 'w')
+    fs_handle = open( (handle_file + '.h'), 'w')    
+    detect_h_code = '''
+#ifndef __{name}_H__
+#define __{name}_H__
 #include <stdint.h>
 
 typedef uint8_t bool;
-'''
+'''.format(name = detect_file)
+    handle_h_code = '''
+#ifndef __{name}_H__
+#define __{name}_H__
+#include <stdint.h>
+
+typedef uint8_t bool;
+'''.format(name = handle_file)
     for i, diag in enumerate(data["diagnostics"]):  
         for j, subitem in enumerate(diag.get("subitems", [])):  
-            funciton = diagnotic_interface_header_function_template.format(detect_func_name = subitem["fault_detection_function_pointer"], handle_func_name = subitem["fault_handling_function_pointer"])    
-            c_code += funciton
-    c_code += '''
+            detect_h_code+= diagnotic_detect_header_function_template.format(detect_func_name = subitem["fault_detection_function_pointer"])    
+            handle_h_code+= diagnotic_handle_header_function_template.format(handle_func_name = subitem["fault_handling_function_pointer"])    
+    detect_h_code += '''
 #endif
 '''
-    fs.write(c_code)
-    fs.close()
+    handle_h_code += '''
+#endif
+'''
+    fs_detect.write(detect_h_code)
+    fs_detect.close()
+    fs_handle.write(handle_h_code)
+    fs_handle.close()    
+            
     
 def build_args():
     """parse input arguments
@@ -234,7 +261,11 @@ def build_args():
         description='Diagnotic code generator input args command:', allow_abbrev=False)
 
     parser.add_argument("-output", dest='output_file',
-                        help="set file path to save generate code")
+                        help="set file path to save generate code(interface)")
+    parser.add_argument("-detect", dest='output_detect_file',
+                        help="set file path to save generate code(detect)")
+    parser.add_argument("-handle", dest='output_handle_file',
+                        help="set file path to save generate code(handle)")                        
     parser.add_argument("-s", "--set-para_path", dest='user_para',
                         help="set para json file path", default="./config.json")
 
@@ -246,9 +277,9 @@ if __name__ == '__main__':
     with open(parser.user_para, 'r') as fs:
         data = fs.read()
         json_data = json.loads(data)    
-        c_code = generate_c_code(json_data)  
+        c_code = generate_c_code(json_data, parser.output_detect_file, parser.output_handle_file)
     with open(parser.output_file, 'w') as fs:
         fs.write(c_code)
         fs.close()
-    generate_diagnotic_interface_source_code(json_data)
-    generate_diagnotic_interface_header_code(json_data)
+    generate_diagnotic_interface_source_code(json_data, parser.output_detect_file, parser.output_handle_file)
+    generate_diagnotic_interface_header_code(json_data, parser.output_detect_file, parser.output_handle_file)

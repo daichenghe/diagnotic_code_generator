@@ -1,8 +1,9 @@
   
 #include <stdio.h>  
 #include <stdint.h> // 引入stdint.h以使用uint8_t类型  
+#include "detect.h"
 #include "handler.h"
-  
+
 #ifndef TRUE
 #define TRUE        0
 #define FALSE       1  

@@ -4,7 +4,7 @@
 
 void PreDriver_ChipOtHandler()
 {
-    printf("PreDriver_ChipOtHandler\r\n");
+    ;
 }
 
 
@@ -100,6 +100,6 @@ void PreDriver_ComFailHandler()
 
 void PreDriver_AdcSampleFailureHandler()
 {
-    printf("PreDriver_AdcSampleFailureHandler\r\n");
+    ;
 }
 
