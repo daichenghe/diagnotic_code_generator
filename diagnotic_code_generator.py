@@ -20,9 +20,12 @@ Subitem {subitem_name} =
     .priority = {fault_priority},
     .tick = 0,
     .fault_detection_count_threshold = {fault_detection_count_threshold},  
+    .fault_recover_count_threshold = {fault_recover_count_threshold},
     // .detectFunc和.handleFunc需要指向实际的函数，这里仅作占位  
+    .reset_enable = {reset_enable},
     .detectFunc = {detectFunc},
     .handleFunc = {handleFunc}, 
+    .resetFunc = {resetFunc},
 }};
 '''
 
@@ -41,6 +44,13 @@ void {handle_func_name}()
 
 '''
 
+diagnotic_reset_handle_source_function_template = '''
+void {reset_handle_func_name}()
+{{
+    ;
+}}
+
+'''
 
 diagnotic_detect_header_function_template = '''
 bool {detect_func_name}();
@@ -51,6 +61,12 @@ diagnotic_handle_header_function_template = '''
 void {handle_func_name}();
 
 '''
+
+diagnotic_reset_handle_header_function_template = '''
+void {reset_handle_func_name}();
+
+'''
+
 # 生成C代码  
 def generate_c_code(data, detect_file, handle_file):
     # 计算诊断项和子项的数量  
@@ -90,9 +106,13 @@ typedef struct Subitem {{
     uint8_t priority;
     uint8_t fault_detection_count_threshold;   
     uint8_t fault_count;
+    uint8_t fault_recover_count_threshold;   
+    uint8_t recover_count;    
     bool fault_status;
+    bool reset_enable;
     detectProcess detectFunc; 
     handleProcess handleFunc; 
+    handleProcess resetFunc;
 }} Subitem;  
   
 typedef struct {{  
@@ -111,7 +131,10 @@ typedef struct {{
         subitems_code = ''  
         for j, subitem in enumerate(diag.get("subitems", [])):  
             count = int(subitem["FDTI"]/subitem["DTI"])
-            diagnostic_subitem_struct = diagnostic_subitem_struct_def_template.format(subitem_name = subitem["name"], id = subitem["id"], DTI = subitem["DTI"], fault_priority = subitem["fault_priority"], fault_detection_count_threshold = count, detectFunc = subitem["fault_detection_function_pointer"], handleFunc = subitem["fault_handling_function_pointer"])    
+            resetEnable = 'FALSE'
+            if subitem["reset_enable"] == True:
+                resetEnable = "TRUE"
+            diagnostic_subitem_struct = diagnostic_subitem_struct_def_template.format(reset_enable = resetEnable, subitem_name = subitem["name"], id = subitem["id"], DTI = subitem["DTI"], fault_priority = subitem["fault_priority"], fault_detection_count_threshold = count, fault_recover_count_threshold = subitem["fault_detection_count_threshold"], detectFunc = subitem["fault_detection_function_pointer"], handleFunc = subitem["fault_handling_function_pointer"], resetFunc = subitem["fault_reset_handling_function_pointer"])    
             c_code += diagnostic_subitem_struct
 
     for diag in (data["diagnostics"]):  
@@ -167,15 +190,27 @@ void check_diagnostics() {
             }
             // 更新fault_detection_count和fault_status  
             if (detection_result) {
-                diagnostics[i]->subitems[j]->fault_count++;  
-                if (diagnostics[i]->subitems[j]->fault_count >= diagnostics[i]->subitems[j]->fault_detection_count_threshold) {
-                    diagnostics[i]->subitems[j]->fault_status = TRUE;  
-                    // 调用处理函数  
-                    diagnostics[i]->subitems[j]->handleFunc();  
+                if(diagnostics[i]->subitems[j]->fault_status = FALSE)
+                {
+                    diagnostics[i]->subitems[j]->fault_count++;  
+                    if (diagnostics[i]->subitems[j]->fault_count >= diagnostics[i]->subitems[j]->fault_detection_count_threshold) {
+                        diagnostics[i]->subitems[j]->fault_status = TRUE;  
+                        // 调用处理函数  
+                        diagnostics[i]->subitems[j]->handleFunc();  
+                        diagnostics[i]->subitems[j]->fault_count = 0;  
+                    }
                 }
             } else {
-                diagnostics[i]->subitems[j]->fault_status = FALSE;  
-                diagnostics[i]->subitems[j]->fault_count = 0; // 可能需要重置计数，取决于具体需求  
+                if(diagnostics[i]->subitems[j]->fault_status = TRUE)
+                {
+                    diagnostics[i]->subitems[j]->recover_count++;  
+                    if (diagnostics[i]->subitems[j]->recover_count >= diagnostics[i]->subitems[j]->fault_recover_count_threshold) {
+                        diagnostics[i]->subitems[j]->fault_status = FALSE;  
+                        // 调用恢复函数 
+                        diagnostics[i]->subitems[j]->resetFunc(); 
+                        diagnostics[i]->subitems[j]->recover_count = 0; 
+                    }
+                }
             }
         } 
     }  
@@ -202,8 +237,8 @@ int main() {
 
 
 def generate_diagnotic_interface_source_code(data, detect_file, handle_file):
-    fs_detect = open( (detect_file + '.c'), 'w')
-    fs_handle = open( (handle_file + '.c'), 'w')    
+    fs_detect = open( (detect_file + '.c'), 'w', encoding='utf-8')
+    fs_handle = open( (handle_file + '.c'), 'w', encoding='utf-8')    
     detect_c_code = '''
 #include "handler.h"
 #include <stdio.h>
@@ -216,14 +251,16 @@ def generate_diagnotic_interface_source_code(data, detect_file, handle_file):
         for j, subitem in enumerate(diag.get("subitems", [])):  
             detect_c_code+= diagnotic_detect_source_function_template.format(detect_func_name = subitem["fault_detection_function_pointer"])
             handle_c_code+= diagnotic_handle_source_function_template.format(handle_func_name = subitem["fault_handling_function_pointer"])
+            if(subitem["reset_enable"] == True):
+                handle_c_code+= diagnotic_reset_handle_source_function_template.format(reset_handle_func_name = subitem["fault_reset_handling_function_pointer"])
     fs_detect.write(detect_c_code)
     fs_detect.close()
     fs_handle.write(handle_c_code)
     fs_handle.close()    
             
 def generate_diagnotic_interface_header_code(data, detect_file, handle_file):
-    fs_detect = open( (detect_file + '.h'), 'w')
-    fs_handle = open( (handle_file + '.h'), 'w')    
+    fs_detect = open( (detect_file + '.h'), 'w', encoding='utf-8')
+    fs_handle = open( (handle_file + '.h'), 'w', encoding='utf-8')    
     detect_h_code = '''
 #ifndef __{name}_H__
 #define __{name}_H__
@@ -241,7 +278,9 @@ typedef uint8_t bool;
     for i, diag in enumerate(data["diagnostics"]):  
         for j, subitem in enumerate(diag.get("subitems", [])):  
             detect_h_code+= diagnotic_detect_header_function_template.format(detect_func_name = subitem["fault_detection_function_pointer"])    
-            handle_h_code+= diagnotic_handle_header_function_template.format(handle_func_name = subitem["fault_handling_function_pointer"])    
+            handle_h_code+= diagnotic_handle_header_function_template.format(handle_func_name = subitem["fault_handling_function_pointer"])
+            if(subitem["reset_enable"] == True):
+                handle_h_code+= diagnotic_reset_handle_header_function_template.format(reset_handle_func_name = subitem["fault_reset_handling_function_pointer"])
     detect_h_code += '''
 #endif
 '''
@@ -278,7 +317,7 @@ if __name__ == '__main__':
         data = fs.read()
         json_data = json.loads(data)    
         c_code = generate_c_code(json_data, parser.output_detect_file, parser.output_handle_file)
-    with open(parser.output_file, 'w') as fs:
+    with open(parser.output_file, 'w', encoding='utf-8') as fs:
         fs.write(c_code)
         fs.close()
     generate_diagnotic_interface_source_code(json_data, parser.output_detect_file, parser.output_handle_file)

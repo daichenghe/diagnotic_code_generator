@@ -11,8 +11,11 @@
                     "DTI": 5,  
                     "FDTI": 10,  
                     "fault_priority": 0,  
+                    "reset_enable": true,
+                    "fault_detection_count_threshold": 2,
                     "fault_detection_function_pointer": "PreDriver_ChipOtDiagnoticProcess",  
-                    "fault_handling_function_pointer": "PreDriver_ChipOtHandler"  
+                    "fault_handling_function_pointer": "PreDriver_ChipOtHandler",
+                    "fault_reset_handling_function_pointer": "PreDriver_ChipOtResetHandler"
                 },  
                 {  
                     "id": 1, 
@@ -21,8 +24,11 @@
                     "DTI": 5,  
                     "FDTI": 10,  
                     "fault_priority": 2,  
+                    "reset_enable": true,
+                    "fault_detection_count_threshold": 2,                    
                     "fault_detection_function_pointer": "PreDriver_CbUvDiagnoticProcess",  
-                    "fault_handling_function_pointer": "PreDriver_CbUvHandler"  
+                    "fault_handling_function_pointer": "PreDriver_CbUvHandler",
+                    "fault_reset_handling_function_pointer": "PreDriver_CbUvResetHandler"
                 },  
                 {  
                     "id": 2, 
@@ -31,8 +37,11 @@
                     "DTI": 5,  
                     "FDTI": 10,  
                     "fault_priority": 2,  
+                    "reset_enable": true,
+                    "fault_detection_count_threshold": 2,                        
                     "fault_detection_function_pointer": "PreDriver_HighSideBcOvDiagnoticProcess",  
-                    "fault_handling_function_pointer": "PreDriver_HighSideBcOvHandler"  
+                    "fault_handling_function_pointer": "PreDriver_HighSideBcOvHandler",
+                    "fault_reset_handling_function_pointer": "PreDriver_HighSideBcOvResetHandler"
                 },  
                 {  
                     "id": 3, 
@@ -41,8 +50,11 @@
                     "DTI": 5,  
                     "FDTI": 10,  
                     "fault_priority": 0,  
+                    "reset_enable": true,
+                    "fault_detection_count_threshold": 2,                        
                     "fault_detection_function_pointer": "PreDriver_CpOlDiagnoticProcess",  
-                    "fault_handling_function_pointer": "PreDriver_CpOlHandler"  
+                    "fault_handling_function_pointer": "PreDriver_CpOlHandler",
+                    "fault_reset_handling_function_pointer": "PreDriver_CpOlResetHandler"
                 },  
                 {  
                     "id": 4, 
@@ -51,8 +63,11 @@
                     "DTI": 5,  
                     "FDTI": 10,  
                     "fault_priority": 0,  
+                    "reset_enable": true,
+                    "fault_detection_count_threshold": 2,                        
                     "fault_detection_function_pointer": "PreDriver_BcUvDiagnoticProcess",  
-                    "fault_handling_function_pointer": "PreDriver_BcUvHandler"  
+                    "fault_handling_function_pointer": "PreDriver_BcUvHandler",
+                    "fault_reset_handling_function_pointer": "PreDriver_BcUvResetHandler"
                 },  
                 {  
                     "id": 5, 
@@ -61,8 +76,11 @@
                     "DTI": 5,  
                     "FDTI": 10,  
                     "fault_priority": 0,  
+                    "reset_enable": true,
+                    "fault_detection_count_threshold": 2,                        
                     "fault_detection_function_pointer": "PreDriver_VccOvDiagnoticProcess",  
-                    "fault_handling_function_pointer": "PreDriver_VccOvHandler"  
+                    "fault_handling_function_pointer": "PreDriver_VccOvHandler",
+                    "fault_reset_handling_function_pointer": "PreDriver_VccOvResetHandler"
                 },  
                 {  
                     "id": 6, 
@@ -71,8 +89,11 @@
                     "DTI": 5,  
                     "FDTI": 10,  
                     "fault_priority": 0,  
+                    "reset_enable": true,
+                    "fault_detection_count_threshold": 2,                        
                     "fault_detection_function_pointer": "PreDriver_VccUvDiagnoticProcess",  
-                    "fault_handling_function_pointer": "PreDriver_VccUvHandler"  
+                    "fault_handling_function_pointer": "PreDriver_VccUvHandler",
+                    "fault_reset_handling_function_pointer": "PreDriver_VccUvResetHandler"
                 },  
                 {  
                     "id": 7, 
@@ -81,8 +102,11 @@
                     "DTI": 5,  
                     "FDTI": 10,  
                     "fault_priority": 0,  
+                    "reset_enable": true,
+                    "fault_detection_count_threshold": 2,                        
                     "fault_detection_function_pointer": "PreDriver_VsOvDiagnoticProcess",  
-                    "fault_handling_function_pointer": "PreDriver_VsOvHandler"  
+                    "fault_handling_function_pointer": "PreDriver_VsOvHandler",
+                    "fault_reset_handling_function_pointer": "PreDriver_VsOvResetHandler"
                 },
                 {  
                     "id": 8, 
@@ -91,8 +115,11 @@
                     "DTI": 5,  
                     "FDTI": 10,  
                     "fault_priority": 0,  
+                    "reset_enable": true,
+                    "fault_detection_count_threshold": 2,                    
                     "fault_detection_function_pointer": "PreDriver_VsUvDiagnoticProcess",  
-                    "fault_handling_function_pointer": "PreDriver_VsUvHandler"  
+                    "fault_handling_function_pointer": "PreDriver_VsUvHandler",
+                    "fault_reset_handling_function_pointer": "PreDriver_VsUvResetHandler"
                 },
                 {  
                     "id": 9, 
@@ -101,8 +128,11 @@
                     "DTI": 5,  
                     "FDTI": 10,  
                     "fault_priority": 0,  
+                    "reset_enable": true,
+                    "fault_detection_count_threshold": 2,                    
                     "fault_detection_function_pointer": "PreDriver_DrainOvDiagnoticProcess",  
-                    "fault_handling_function_pointer": "PreDriver_DrainOvHandler"  
+                    "fault_handling_function_pointer": "PreDriver_DrainOvHandler",
+                    "fault_reset_handling_function_pointer": "PreDriver_DrainOvResetHandler"
                 },
                 {  
                     "id": 10,
@@ -111,8 +141,11 @@
                     "DTI": 5,
                     "FDTI": 10,
                     "fault_priority": 0,
+                    "reset_enable": true,
+                    "fault_detection_count_threshold": 2,                    
                     "fault_detection_function_pointer": "PreDriver_DrainUvDiagnoticProcess",
-                    "fault_handling_function_pointer": "PreDriver_DrainUvHandler"
+                    "fault_handling_function_pointer": "PreDriver_DrainUvHandler",
+                    "fault_reset_handling_function_pointer": "PreDriver_DrainUvResetHandler"
                 },
                 {  
                     "id": 11,
@@ -121,8 +154,11 @@
                     "DTI": 5,
                     "FDTI": 10,
                     "fault_priority": 2,
+                    "reset_enable": true,
+                    "fault_detection_count_threshold": 2,                    
                     "fault_detection_function_pointer": "PreDriver_ClockFailureDiagnoticProcess",
-                    "fault_handling_function_pointer": "PreDriver_ClockFailureHandler"
+                    "fault_handling_function_pointer": "PreDriver_ClockFailureHandler",
+                    "fault_reset_handling_function_pointer": "PreDriver_ClockFailureResetHandler"
                 },
                 {  
                     "id": 12,
@@ -131,8 +167,11 @@
                     "DTI": 5,
                     "FDTI": 10,
                     "fault_priority": 2,
+                    "reset_enable": true,
+                    "fault_detection_count_threshold": 2,                    
                     "fault_detection_function_pointer": "PreDriver_VsOlDiagnoticDiagnoticProcess",
-                    "fault_handling_function_pointer": "PreDriver_VsOlHandler"
+                    "fault_handling_function_pointer": "PreDriver_VsOlHandler",
+                    "fault_reset_handling_function_pointer": "PreDriver_VsOlResetHandler"
                 },
                 {  
                     "id": 13,
@@ -141,8 +180,11 @@
                     "DTI": 5,
                     "FDTI": 10,
                     "fault_priority": 2,
+                    "reset_enable": true,
+                    "fault_detection_count_threshold": 2,                    
                     "fault_detection_function_pointer": "PreDriver_MosfetOcDiagnoticProcess",
-                    "fault_handling_function_pointer": "PreDriver_MosfetOcHandler"
+                    "fault_handling_function_pointer": "PreDriver_MosfetOcHandler",
+                    "fault_reset_handling_function_pointer": "PreDriver_MosfetOcResetHandler"
                 },
                 {  
                     "id": 14,
@@ -151,8 +193,11 @@
                     "DTI": 5,
                     "FDTI": 10,
                     "fault_priority": 2,
+                    "reset_enable": true,
+                    "fault_detection_count_threshold": 2,                    
                     "fault_detection_function_pointer": "PreDriver_SignatureInvalidDiagnoticProcess",
-                    "fault_handling_function_pointer": "PreDriver_SignatureInvalidHandler"
+                    "fault_handling_function_pointer": "PreDriver_SignatureInvalidHandler",
+                    "fault_reset_handling_function_pointer": "PreDriver_SignatureInvalidResetHandler"
                 },
                 {  
                     "id": 15,
@@ -161,8 +206,11 @@
                     "DTI": 5,
                     "FDTI": 10,
                     "fault_priority": 2,
+                    "reset_enable": true,
+                    "fault_detection_count_threshold": 2,                    
                     "fault_detection_function_pointer": "PreDriver_ComFailDiagnoticProcess",
-                    "fault_handling_function_pointer": "PreDriver_ComFailHandler"
+                    "fault_handling_function_pointer": "PreDriver_ComFailHandler",
+                    "fault_reset_handling_function_pointer": "PreDriver_ComFailResetHandler"
                 }
             ]  
         },
@@ -177,8 +225,11 @@
                     "DTI": 5,
                     "FDTI": 10,
                     "fault_priority": 2,
+                    "reset_enable": true, 
+                    "fault_detection_count_threshold": 2,                    
                     "fault_detection_function_pointer": "PreDriver_AdcSampleFailureDiagnoticProcess",
-                    "fault_handling_function_pointer": "PreDriver_AdcSampleFailureHandler"
+                    "fault_handling_function_pointer": "PreDriver_AdcSampleFailureHandler",
+                    "fault_reset_handling_function_pointer": "PreDriver_AdcSampleFailureResetHandler"
                 }
             ]  
         }  

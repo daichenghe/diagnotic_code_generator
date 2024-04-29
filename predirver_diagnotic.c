@@ -1,6 +1,6 @@
   
 #include <stdio.h>  
-#include <stdint.h> // ÒıÈëstdint.hÒÔÊ¹ÓÃuint8_tÀàĞÍ  
+#include <stdint.h> // å¼•å…¥stdint.hä»¥ä½¿ç”¨uint8_tç±»å‹  
 #include "detect.h"
 #include "handler.h"
 
@@ -14,11 +14,11 @@
 #define MAX_SUBITEM_ID_LENGTH 1  
 #define MAX_SUBITEMS_PER_DIAG 16  
   
-// º¯ÊıÖ¸ÕëÀàĞÍ¶¨Òå£¬ĞèÒªÔÚC´úÂëÖĞÊµÏÖÕâĞ©º¯Êı  
+// å‡½æ•°æŒ‡é’ˆç±»å‹å®šä¹‰ï¼Œéœ€è¦åœ¨Cä»£ç ä¸­å®ç°è¿™äº›å‡½æ•°  
 typedef bool (*detectProcess)();  
 typedef void (*handleProcess)();  
   
-// ¶¨Òå½á¹¹Ìå  
+// å®šä¹‰ç»“æ„ä½“  
 typedef struct Subitem {  
     char id;  
     uint8_t DTI; 
@@ -26,9 +26,13 @@ typedef struct Subitem {
     uint8_t priority;
     uint8_t fault_detection_count_threshold;   
     uint8_t fault_count;
+    uint8_t fault_recover_count_threshold;   
+    uint8_t recover_count;    
     bool fault_status;
+    bool reset_enable;
     detectProcess detectFunc; 
     handleProcess handleFunc; 
+    handleProcess resetFunc;
 } Subitem;  
   
 typedef struct {  
@@ -46,9 +50,12 @@ Subitem ChipOt =
     .priority = 0,
     .tick = 0,
     .fault_detection_count_threshold = 2,  
-    // .detectFuncºÍ.handleFuncĞèÒªÖ¸ÏòÊµ¼ÊµÄº¯Êı£¬ÕâÀï½ö×÷Õ¼Î»  
+    .fault_recover_count_threshold = 2,
+    // .detectFuncå’Œ.handleFuncéœ€è¦æŒ‡å‘å®é™…çš„å‡½æ•°ï¼Œè¿™é‡Œä»…ä½œå ä½  
+    .reset_enable = TRUE,
     .detectFunc = PreDriver_ChipOtDiagnoticProcess,
     .handleFunc = PreDriver_ChipOtHandler, 
+    .resetFunc = PreDriver_ChipOtResetHandler,
 };
 
 Subitem CbUv = 
@@ -58,9 +65,12 @@ Subitem CbUv =
     .priority = 2,
     .tick = 0,
     .fault_detection_count_threshold = 2,  
-    // .detectFuncºÍ.handleFuncĞèÒªÖ¸ÏòÊµ¼ÊµÄº¯Êı£¬ÕâÀï½ö×÷Õ¼Î»  
+    .fault_recover_count_threshold = 2,
+    // .detectFuncå’Œ.handleFuncéœ€è¦æŒ‡å‘å®é™…çš„å‡½æ•°ï¼Œè¿™é‡Œä»…ä½œå ä½  
+    .reset_enable = TRUE,
     .detectFunc = PreDriver_CbUvDiagnoticProcess,
     .handleFunc = PreDriver_CbUvHandler, 
+    .resetFunc = PreDriver_CbUvResetHandler,
 };
 
 Subitem HighBcOv = 
@@ -70,9 +80,12 @@ Subitem HighBcOv =
     .priority = 2,
     .tick = 0,
     .fault_detection_count_threshold = 2,  
-    // .detectFuncºÍ.handleFuncĞèÒªÖ¸ÏòÊµ¼ÊµÄº¯Êı£¬ÕâÀï½ö×÷Õ¼Î»  
+    .fault_recover_count_threshold = 2,
+    // .detectFuncå’Œ.handleFuncéœ€è¦æŒ‡å‘å®é™…çš„å‡½æ•°ï¼Œè¿™é‡Œä»…ä½œå ä½  
+    .reset_enable = TRUE,
     .detectFunc = PreDriver_HighSideBcOvDiagnoticProcess,
     .handleFunc = PreDriver_HighSideBcOvHandler, 
+    .resetFunc = PreDriver_HighSideBcOvResetHandler,
 };
 
 Subitem CpOl = 
@@ -82,9 +95,12 @@ Subitem CpOl =
     .priority = 0,
     .tick = 0,
     .fault_detection_count_threshold = 2,  
-    // .detectFuncºÍ.handleFuncĞèÒªÖ¸ÏòÊµ¼ÊµÄº¯Êı£¬ÕâÀï½ö×÷Õ¼Î»  
+    .fault_recover_count_threshold = 2,
+    // .detectFuncå’Œ.handleFuncéœ€è¦æŒ‡å‘å®é™…çš„å‡½æ•°ï¼Œè¿™é‡Œä»…ä½œå ä½  
+    .reset_enable = TRUE,
     .detectFunc = PreDriver_CpOlDiagnoticProcess,
     .handleFunc = PreDriver_CpOlHandler, 
+    .resetFunc = PreDriver_CpOlResetHandler,
 };
 
 Subitem BcUv = 
@@ -94,9 +110,12 @@ Subitem BcUv =
     .priority = 0,
     .tick = 0,
     .fault_detection_count_threshold = 2,  
-    // .detectFuncºÍ.handleFuncĞèÒªÖ¸ÏòÊµ¼ÊµÄº¯Êı£¬ÕâÀï½ö×÷Õ¼Î»  
+    .fault_recover_count_threshold = 2,
+    // .detectFuncå’Œ.handleFuncéœ€è¦æŒ‡å‘å®é™…çš„å‡½æ•°ï¼Œè¿™é‡Œä»…ä½œå ä½  
+    .reset_enable = TRUE,
     .detectFunc = PreDriver_BcUvDiagnoticProcess,
     .handleFunc = PreDriver_BcUvHandler, 
+    .resetFunc = PreDriver_BcUvResetHandler,
 };
 
 Subitem VccOv = 
@@ -106,9 +125,12 @@ Subitem VccOv =
     .priority = 0,
     .tick = 0,
     .fault_detection_count_threshold = 2,  
-    // .detectFuncºÍ.handleFuncĞèÒªÖ¸ÏòÊµ¼ÊµÄº¯Êı£¬ÕâÀï½ö×÷Õ¼Î»  
+    .fault_recover_count_threshold = 2,
+    // .detectFuncå’Œ.handleFuncéœ€è¦æŒ‡å‘å®é™…çš„å‡½æ•°ï¼Œè¿™é‡Œä»…ä½œå ä½  
+    .reset_enable = TRUE,
     .detectFunc = PreDriver_VccOvDiagnoticProcess,
     .handleFunc = PreDriver_VccOvHandler, 
+    .resetFunc = PreDriver_VccOvResetHandler,
 };
 
 Subitem VccUv = 
@@ -118,9 +140,12 @@ Subitem VccUv =
     .priority = 0,
     .tick = 0,
     .fault_detection_count_threshold = 2,  
-    // .detectFuncºÍ.handleFuncĞèÒªÖ¸ÏòÊµ¼ÊµÄº¯Êı£¬ÕâÀï½ö×÷Õ¼Î»  
+    .fault_recover_count_threshold = 2,
+    // .detectFuncå’Œ.handleFuncéœ€è¦æŒ‡å‘å®é™…çš„å‡½æ•°ï¼Œè¿™é‡Œä»…ä½œå ä½  
+    .reset_enable = TRUE,
     .detectFunc = PreDriver_VccUvDiagnoticProcess,
     .handleFunc = PreDriver_VccUvHandler, 
+    .resetFunc = PreDriver_VccUvResetHandler,
 };
 
 Subitem VsOv = 
@@ -130,9 +155,12 @@ Subitem VsOv =
     .priority = 0,
     .tick = 0,
     .fault_detection_count_threshold = 2,  
-    // .detectFuncºÍ.handleFuncĞèÒªÖ¸ÏòÊµ¼ÊµÄº¯Êı£¬ÕâÀï½ö×÷Õ¼Î»  
+    .fault_recover_count_threshold = 2,
+    // .detectFuncå’Œ.handleFuncéœ€è¦æŒ‡å‘å®é™…çš„å‡½æ•°ï¼Œè¿™é‡Œä»…ä½œå ä½  
+    .reset_enable = TRUE,
     .detectFunc = PreDriver_VsOvDiagnoticProcess,
     .handleFunc = PreDriver_VsOvHandler, 
+    .resetFunc = PreDriver_VsOvResetHandler,
 };
 
 Subitem VsUv = 
@@ -142,9 +170,12 @@ Subitem VsUv =
     .priority = 0,
     .tick = 0,
     .fault_detection_count_threshold = 2,  
-    // .detectFuncºÍ.handleFuncĞèÒªÖ¸ÏòÊµ¼ÊµÄº¯Êı£¬ÕâÀï½ö×÷Õ¼Î»  
+    .fault_recover_count_threshold = 2,
+    // .detectFuncå’Œ.handleFuncéœ€è¦æŒ‡å‘å®é™…çš„å‡½æ•°ï¼Œè¿™é‡Œä»…ä½œå ä½  
+    .reset_enable = TRUE,
     .detectFunc = PreDriver_VsUvDiagnoticProcess,
     .handleFunc = PreDriver_VsUvHandler, 
+    .resetFunc = PreDriver_VsUvResetHandler,
 };
 
 Subitem DrainOv = 
@@ -154,9 +185,12 @@ Subitem DrainOv =
     .priority = 0,
     .tick = 0,
     .fault_detection_count_threshold = 2,  
-    // .detectFuncºÍ.handleFuncĞèÒªÖ¸ÏòÊµ¼ÊµÄº¯Êı£¬ÕâÀï½ö×÷Õ¼Î»  
+    .fault_recover_count_threshold = 2,
+    // .detectFuncå’Œ.handleFuncéœ€è¦æŒ‡å‘å®é™…çš„å‡½æ•°ï¼Œè¿™é‡Œä»…ä½œå ä½  
+    .reset_enable = TRUE,
     .detectFunc = PreDriver_DrainOvDiagnoticProcess,
     .handleFunc = PreDriver_DrainOvHandler, 
+    .resetFunc = PreDriver_DrainOvResetHandler,
 };
 
 Subitem DrainUv = 
@@ -166,9 +200,12 @@ Subitem DrainUv =
     .priority = 0,
     .tick = 0,
     .fault_detection_count_threshold = 2,  
-    // .detectFuncºÍ.handleFuncĞèÒªÖ¸ÏòÊµ¼ÊµÄº¯Êı£¬ÕâÀï½ö×÷Õ¼Î»  
+    .fault_recover_count_threshold = 2,
+    // .detectFuncå’Œ.handleFuncéœ€è¦æŒ‡å‘å®é™…çš„å‡½æ•°ï¼Œè¿™é‡Œä»…ä½œå ä½  
+    .reset_enable = TRUE,
     .detectFunc = PreDriver_DrainUvDiagnoticProcess,
     .handleFunc = PreDriver_DrainUvHandler, 
+    .resetFunc = PreDriver_DrainUvResetHandler,
 };
 
 Subitem ClockFailure = 
@@ -178,9 +215,12 @@ Subitem ClockFailure =
     .priority = 2,
     .tick = 0,
     .fault_detection_count_threshold = 2,  
-    // .detectFuncºÍ.handleFuncĞèÒªÖ¸ÏòÊµ¼ÊµÄº¯Êı£¬ÕâÀï½ö×÷Õ¼Î»  
+    .fault_recover_count_threshold = 2,
+    // .detectFuncå’Œ.handleFuncéœ€è¦æŒ‡å‘å®é™…çš„å‡½æ•°ï¼Œè¿™é‡Œä»…ä½œå ä½  
+    .reset_enable = TRUE,
     .detectFunc = PreDriver_ClockFailureDiagnoticProcess,
     .handleFunc = PreDriver_ClockFailureHandler, 
+    .resetFunc = PreDriver_ClockFailureResetHandler,
 };
 
 Subitem VsOl = 
@@ -190,9 +230,12 @@ Subitem VsOl =
     .priority = 2,
     .tick = 0,
     .fault_detection_count_threshold = 2,  
-    // .detectFuncºÍ.handleFuncĞèÒªÖ¸ÏòÊµ¼ÊµÄº¯Êı£¬ÕâÀï½ö×÷Õ¼Î»  
+    .fault_recover_count_threshold = 2,
+    // .detectFuncå’Œ.handleFuncéœ€è¦æŒ‡å‘å®é™…çš„å‡½æ•°ï¼Œè¿™é‡Œä»…ä½œå ä½  
+    .reset_enable = TRUE,
     .detectFunc = PreDriver_VsOlDiagnoticDiagnoticProcess,
     .handleFunc = PreDriver_VsOlHandler, 
+    .resetFunc = PreDriver_VsOlResetHandler,
 };
 
 Subitem MosfetOc = 
@@ -202,9 +245,12 @@ Subitem MosfetOc =
     .priority = 2,
     .tick = 0,
     .fault_detection_count_threshold = 2,  
-    // .detectFuncºÍ.handleFuncĞèÒªÖ¸ÏòÊµ¼ÊµÄº¯Êı£¬ÕâÀï½ö×÷Õ¼Î»  
+    .fault_recover_count_threshold = 2,
+    // .detectFuncå’Œ.handleFuncéœ€è¦æŒ‡å‘å®é™…çš„å‡½æ•°ï¼Œè¿™é‡Œä»…ä½œå ä½  
+    .reset_enable = TRUE,
     .detectFunc = PreDriver_MosfetOcDiagnoticProcess,
     .handleFunc = PreDriver_MosfetOcHandler, 
+    .resetFunc = PreDriver_MosfetOcResetHandler,
 };
 
 Subitem SignatureInvalid = 
@@ -214,9 +260,12 @@ Subitem SignatureInvalid =
     .priority = 2,
     .tick = 0,
     .fault_detection_count_threshold = 2,  
-    // .detectFuncºÍ.handleFuncĞèÒªÖ¸ÏòÊµ¼ÊµÄº¯Êı£¬ÕâÀï½ö×÷Õ¼Î»  
+    .fault_recover_count_threshold = 2,
+    // .detectFuncå’Œ.handleFuncéœ€è¦æŒ‡å‘å®é™…çš„å‡½æ•°ï¼Œè¿™é‡Œä»…ä½œå ä½  
+    .reset_enable = TRUE,
     .detectFunc = PreDriver_SignatureInvalidDiagnoticProcess,
     .handleFunc = PreDriver_SignatureInvalidHandler, 
+    .resetFunc = PreDriver_SignatureInvalidResetHandler,
 };
 
 Subitem ComFail = 
@@ -226,9 +275,12 @@ Subitem ComFail =
     .priority = 2,
     .tick = 0,
     .fault_detection_count_threshold = 2,  
-    // .detectFuncºÍ.handleFuncĞèÒªÖ¸ÏòÊµ¼ÊµÄº¯Êı£¬ÕâÀï½ö×÷Õ¼Î»  
+    .fault_recover_count_threshold = 2,
+    // .detectFuncå’Œ.handleFuncéœ€è¦æŒ‡å‘å®é™…çš„å‡½æ•°ï¼Œè¿™é‡Œä»…ä½œå ä½  
+    .reset_enable = TRUE,
     .detectFunc = PreDriver_ComFailDiagnoticProcess,
     .handleFunc = PreDriver_ComFailHandler, 
+    .resetFunc = PreDriver_ComFailResetHandler,
 };
 
 Subitem AdcSampleFailure = 
@@ -238,9 +290,12 @@ Subitem AdcSampleFailure =
     .priority = 2,
     .tick = 0,
     .fault_detection_count_threshold = 2,  
-    // .detectFuncºÍ.handleFuncĞèÒªÖ¸ÏòÊµ¼ÊµÄº¯Êı£¬ÕâÀï½ö×÷Õ¼Î»  
+    .fault_recover_count_threshold = 2,
+    // .detectFuncå’Œ.handleFuncéœ€è¦æŒ‡å‘å®é™…çš„å‡½æ•°ï¼Œè¿™é‡Œä»…ä½œå ä½  
+    .reset_enable = TRUE,
     .detectFunc = PreDriver_AdcSampleFailureDiagnoticProcess,
     .handleFunc = PreDriver_AdcSampleFailureHandler, 
+    .resetFunc = PreDriver_AdcSampleFailureResetHandler,
 };
 Subitem* subitemsCDD_PreDriverDiagnoticGroup[16] = {&ChipOt, &CbUv, &HighBcOv, &CpOl, &BcUv, &VccOv, &VccUv, &VsOv, &VsUv, &DrainOv, &DrainUv, &ClockFailure, &VsOl, &MosfetOc, &SignatureInvalid, &ComFail};
 Subitem* subitemsMCAL_AdcDiagnoticGroup[1] = {&AdcSampleFailure};
@@ -258,45 +313,57 @@ DiagnosticGroup MCAL_AdcDiagnoticGroup = {
 };
 DiagnosticGroup*   diagnostics[2] = {&CDD_PreDriverDiagnoticGroup, &MCAL_AdcDiagnoticGroup };  
   
-// ¶¨Ê±¼ì²éÕï¶ÏÏîµÄº¯Êı  
+// å®šæ—¶æ£€æŸ¥è¯Šæ–­é¡¹çš„å‡½æ•°  
 void check_diagnostics() {
     uint8_t diagnoticPeriod = 5;
     for (int i = 0; i < NUM_DIAGNOSTICS; i++) {
         for (int j = 0; j < diagnostics[i]->number; j++) {
             diagnostics[i]->subitems[j]->tick+= diagnoticPeriod;
             bool detection_result = FALSE;
-            // µ÷ÓÃ¼ì²âº¯Êı  
+            // è°ƒç”¨æ£€æµ‹å‡½æ•°  
             if(diagnostics[i]->subitems[j]->tick >= diagnostics[i]->subitems[j]->DTI)
             {
                 detection_result = diagnostics[i]->subitems[j]->detectFunc();  
                 diagnostics[i]->subitems[j]->tick = 0;
             }
-            // ¸üĞÂfault_detection_countºÍfault_status  
+            // æ›´æ–°fault_detection_countå’Œfault_status  
             if (detection_result) {
-                diagnostics[i]->subitems[j]->fault_count++;  
-                if (diagnostics[i]->subitems[j]->fault_count >= diagnostics[i]->subitems[j]->fault_detection_count_threshold) {
-                    diagnostics[i]->subitems[j]->fault_status = TRUE;  
-                    // µ÷ÓÃ´¦Àíº¯Êı  
-                    diagnostics[i]->subitems[j]->handleFunc();  
+                if(diagnostics[i]->subitems[j]->fault_status = FALSE)
+                {
+                    diagnostics[i]->subitems[j]->fault_count++;  
+                    if (diagnostics[i]->subitems[j]->fault_count >= diagnostics[i]->subitems[j]->fault_detection_count_threshold) {
+                        diagnostics[i]->subitems[j]->fault_status = TRUE;  
+                        // è°ƒç”¨å¤„ç†å‡½æ•°  
+                        diagnostics[i]->subitems[j]->handleFunc();  
+                        diagnostics[i]->subitems[j]->fault_count = 0;  
+                    }
                 }
             } else {
-                diagnostics[i]->subitems[j]->fault_status = FALSE;  
-                diagnostics[i]->subitems[j]->fault_count = 0; // ¿ÉÄÜĞèÒªÖØÖÃ¼ÆÊı£¬È¡¾öÓÚ¾ßÌåĞèÇó  
+                if(diagnostics[i]->subitems[j]->fault_status = TRUE)
+                {
+                    diagnostics[i]->subitems[j]->recover_count++;  
+                    if (diagnostics[i]->subitems[j]->recover_count >= diagnostics[i]->subitems[j]->fault_recover_count_threshold) {
+                        diagnostics[i]->subitems[j]->fault_status = FALSE;  
+                        // è°ƒç”¨æ¢å¤å‡½æ•° 
+                        diagnostics[i]->subitems[j]->resetFunc(); 
+                        diagnostics[i]->subitems[j]->recover_count = 0; 
+                    }
+                }
             }
         } 
     }  
 }  
 
-// Ö÷º¯Êı  
+// ä¸»å‡½æ•°  
 int main() {
-    // ³õÊ¼»¯detectFuncºÍhandleFunc×Ö¶Î£¨ÕâÀïÓÃÕ¼Î»·û´úÌæÊµ¼Êº¯Êı£©  
-    // ... (ÎªdetectFuncºÍhandleFunc×Ö¶ÎÌí¼ÓÊÊµ±µÄ³õÊ¼»¯´úÂë)  
+    // åˆå§‹åŒ–detectFuncå’ŒhandleFuncå­—æ®µï¼ˆè¿™é‡Œç”¨å ä½ç¬¦ä»£æ›¿å®é™…å‡½æ•°ï¼‰  
+    // ... (ä¸ºdetectFuncå’ŒhandleFuncå­—æ®µæ·»åŠ é€‚å½“çš„åˆå§‹åŒ–ä»£ç )  
       
-    // Ä£Äâ¶¨Ê±Æ÷»òÑ­»·À´¼ì²éÕï¶ÏÏî  
+    // æ¨¡æ‹Ÿå®šæ—¶å™¨æˆ–å¾ªç¯æ¥æ£€æŸ¥è¯Šæ–­é¡¹  
     while (1) {  
         check_diagnostics();  
-        // µÈ´ıDTIÊ±¼ä»ò½øĞĞÆäËû²Ù×÷  
-        // sleep(DTI); // ¼ÙÉèÓĞsleepº¯Êı¿ÉÓÃ£¬Êµ¼ÊÊµÏÖÈ¡¾öÓÚÆ½Ì¨  
+        // ç­‰å¾…DTIæ—¶é—´æˆ–è¿›è¡Œå…¶ä»–æ“ä½œ  
+        // sleep(DTI); // å‡è®¾æœ‰sleepå‡½æ•°å¯ç”¨ï¼Œå®é™…å®ç°å–å†³äºå¹³å°  
     } 
       
     return 0;  

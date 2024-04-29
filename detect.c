@@ -5,7 +5,7 @@
 bool PreDriver_ChipOtDiagnoticProcess()
 {
     printf("PreDriver_ChipOtDiagnoticProcess\r\n");
-	return 0;
+    return 1;
 }
 
 
@@ -101,7 +101,6 @@ bool PreDriver_ComFailDiagnoticProcess()
 
 bool PreDriver_AdcSampleFailureDiagnoticProcess()
 {
-    printf("PreDriver_AdcSampleFailureDiagnoticProcess\r\n");
-	return 1;
+    ;
 }
 
